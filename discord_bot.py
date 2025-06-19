@@ -8,6 +8,9 @@ if TOKEN is None:
     print("❌ DISCORD_TOKEN not set in environment.")
     exit(1)
 
+# Your development server's guild ID for instant command registration
+GUILD_ID = 714705026978676737
+
 # Champion pools by role
 champions_by_role = {
     "Top": [
@@ -46,19 +49,35 @@ champions_by_role = {
 intents = discord.Intents.default()
 bot = discord.Bot(intents=intents)
 
-# Notify when bot is ready
-@bot.event
-async def on_ready():
-    print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
-
-# Slash command for team comp
-@bot.slash_command(name="team", description="🎮 Generate a random League of Legends team composition")
-async def team(ctx: discord.ApplicationContext):
+# Shared response function
+async def send_team(ctx):
     comp = {role: random.choice(champs) for role, champs in champions_by_role.items()}
     response = "**🎮 Random League Team Comp:**\n"
     for role, champ in comp.items():
         response += f"**{role}:** {champ}\n"
     await ctx.respond(response)
+
+# Dev guild (instant register)
+@bot.slash_command(
+    name="team",
+    description="🎮 Generate a random League of Legends team composition",
+    guild_ids=[GUILD_ID]
+)
+async def team_dev(ctx: discord.ApplicationContext):
+    await send_team(ctx)
+
+# Global (delayed registration for all other servers)
+@bot.slash_command(
+    name="team",
+    description="🎮 Generate a random League of Legends team composition"
+)
+async def team_global(ctx: discord.ApplicationContext):
+    await send_team(ctx)
+
+# Notify when bot is ready
+@bot.event
+async def on_ready():
+    print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
 
 # Run the bot
 bot.run(TOKEN)
