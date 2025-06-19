@@ -8,8 +8,7 @@ if TOKEN is None:
     print("Warning: Discord token not found in environment variables!")
     exit(1)
 
-
-# Full champion pools by role (as of Jan 2025; 170 total) :contentReference[oaicite:1]{index=1}
+# Full champion pools by role (as of Jan 2025; 170 total)
 champions_by_role = {
     "Top": [
         "Aatrox","Camille","Cho’Gath","Darius","Dr. Mundo","Fiora","Gangplank","Garen",
@@ -43,7 +42,9 @@ champions_by_role = {
     ],
 }
 
+# Set up intents and client
 intents = discord.Intents.default()
+intents.message_content = True  # This line is crucial!
 client = discord.Client(intents=intents)
 
 @client.event
@@ -52,6 +53,8 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
+    print(f"Received message: {message.content} from {message.author}")  # Debug log
+
     if message.author.bot:
         return
 
@@ -63,3 +66,4 @@ async def on_message(message):
         await message.channel.send(resp)
 
 client.run(TOKEN)
+
