@@ -1,10 +1,13 @@
 import discord
 import random
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
-DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("DISCORD_TOKEN")
+
+if TOKEN is None:
+    print("Warning: Discord token not found in environment variables!")
+    exit(1)
+
 
 # Full champion pools by role (as of Jan 2025; 170 total) :contentReference[oaicite:1]{index=1}
 champions_by_role = {
@@ -59,4 +62,4 @@ async def on_message(message):
             resp += f"**{role}:** {champ}\n"
         await message.channel.send(resp)
 
-client.run(DISCORD_TOKEN)
+client.run(TOKEN)
