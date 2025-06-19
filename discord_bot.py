@@ -42,9 +42,11 @@ champions_by_role = {
     ],
 }
 
-# Set up intents and client
 intents = discord.Intents.default()
-intents.message_content = True  # This line is crucial!
+intents.message_content = True
+intents.guilds = True
+intents.messages = True
+
 client = discord.Client(intents=intents)
 
 @client.event
@@ -53,10 +55,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print(f"Received message: {message.content} from {message.author}")  # Debug log
-
     if message.author.bot:
-        return
+        return  # Ignore messages from any bot, including itself
+
+    # Debug print to check for duplicates (optional)
+    # print(f"Received message: {message.content} from {message.author} in {message.channel}")
 
     if message.content.lower().startswith("!team"):
         comp = { role: random.choice(champs) for role, champs in champions_by_role.items() }
@@ -66,4 +69,5 @@ async def on_message(message):
         await message.channel.send(resp)
 
 client.run(TOKEN)
+
 
